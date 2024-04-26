@@ -62,8 +62,8 @@ def Lagrange2(x):
 
 #generate(ex2,-1,1,0.1)
 
-#generate(ex2,-1,1,0.01, 90) #ex3
+generate(ex2,-1,1,0.01, 90) #ex3
 
 #generate(Lagrange([[0,2],[1,4],[2,-2],[3,-1]]),-1,4,0.1)
 
-generate(Lagrange2,-1,4,0.1)
+#generate(Lagrange2,-1,4,0.1)
