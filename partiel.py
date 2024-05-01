@@ -8,6 +8,37 @@ def Reverse(tuples):
     new_tup = tuples[::-1]
     return new_tup
 
+def rotate180From(tempOrigin, P):
+
+    transP = [P[0] - tempOrigin[0], P[1] - tempOrigin[1]]
+    """
+    the rotation matrix is as follows:
+    -1          0
+    0           -1
+    """
+    transP[0] = -transP[0]
+    transP[1] = -transP[1]
+    #and then we return to the original position
+    finalP = [transP[0] + tempOrigin[0], transP[1] + tempOrigin[1], P[2]]
+
+    return finalP
+
+def rotate90From(tempOrigin, P):
+
+    """
+    the rotation matrix is as follows:
+    
+    0     -1
+    1     0
+    """
+    transP = [-(P[1] - tempOrigin[1]), (P[0] - tempOrigin[0])]
+    #and then we return to the original position
+    finalP = [transP[0] + tempOrigin[0], transP[1] + tempOrigin[1], P[2]]
+
+    return finalP
+
+
+
 def Hermite(bornes):
 
     """
@@ -33,28 +64,26 @@ def Hermite(bornes):
         + (bornes[1][0]  - bornes[0][0]) * bornes[1][2] * phiFour(phiX)
         )
          
-    return (x,y)
+    return [x,y]
 
 def HermiteList(points):
     x = []
     y = []
     for i in range(len(points)-1):
         if(points[i+1][0]<points[i][0]):
-
+            """
             flippedEnd = rotate180From(points[i], points[i+1])
 
             xy = Hermite([points[i], flippedEnd])
 
             for i in range(len(xy)):
-                i = rotate180From(points[i], i)
-            
+                xy[i] = rotate180From(points[i], xy[i])
             """
             # On retourne en arrière, faut faire une rotation
             # On inverse leurs dérivées
-            a = [points[i+1][0],points[i+1][1],- ( 100 - points[i+1][2])]
-            b = [points[i][0],points[i][1],- ( 100 - points[i+1][2])]
+            a = [points[i+1][0], points[i+1][1], points[i+1][2]]
+            b = [points[i][0], points[i][1], points[i][2]]
             xy = Hermite([a, b])
-            """
             
         else:
             xy = Hermite([points[i], points[i+1]])
@@ -84,42 +113,8 @@ def Display(x,y):
     plt.plot(x, y)
     plt.show()
 
-A = HermiteList([[1.8,5.8,2], [4,7,-0.2], [4.6,8.4, -1]])
+#A = HermiteList([[1.8,5.8,2], [4,7,-0.2], [4.6,8.4, -1], [6, 9.5,-0.2], [8,7,-0.8], [8.2, 4.6, 0], [9.6, 4.4, 1], [7,3.2, 0], [5, 1.2, 0]])
 B = HermiteList([[2,6,1],[6,6,1],[3.6,8.5,0],[8.6,7.5,- 1]])
-C = HermiteList([[0,0,1],[0.1,1,-1]])
 #Display(A[0], A[1])
 Display(B[0],B[1])
-#Display(A[0],A[1])
 
-#[6, 9.5,-0.2], [8,7,-0.8], [8.2, 4.6, 0], [9.6, 4.4, 1], [7,3.2, 0], [5, 1.2, 0]
-
-def rotate180From(tempOrigin, P):
-
-    transP = [P[0] - tempOrigin[0], P[1] - tempOrigin[1]]
-    """
-    the rotation matrix is as follows:
-    -1          0
-    0           -1
-    """
-    transP[0] = -transP[0]
-    transP[1] = -transP[1]
-    #and then we return to the original position
-    transP[0] = transP[0] + tempOrigin[0]
-    transP[1] = transP[1] + tempOrigin[1]
-
-    return transP
-
-def rotate90From(tempOrigin, P):
-
-    """
-    the rotation matrix is as follows:
-    
-    0     -1
-    1     0
-    """
-    transP = [-(P[1] - tempOrigin[1]), (P[0] - tempOrigin[0])]
-    #and then we return to the original position
-    transP[0] = transP[0] + tempOrigin[0]
-    transP[1] = transP[1] + tempOrigin[1]
-
-    return transP
