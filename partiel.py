@@ -40,11 +40,22 @@ def HermiteList(points):
     y = []
     for i in range(len(points)-1):
         if(points[i+1][0]<points[i][0]):
-        #     ## On retourne en arrière, faut faire une rotation
+
+            flippedEnd = rotate180From(points[i], points[i+1])
+
+            xy = Hermite([points[i], flippedEnd])
+
+            for i in range(len(xy)):
+                i = rotate180From(points[i], i)
+            
+            """
+            # On retourne en arrière, faut faire une rotation
             # On inverse leurs dérivées
             a = [points[i+1][0],points[i+1][1],- ( 100 - points[i+1][2])]
             b = [points[i][0],points[i][1],- ( 100 - points[i+1][2])]
             xy = Hermite([a, b])
+            """
+            
         else:
             xy = Hermite([points[i], points[i+1]])
             
