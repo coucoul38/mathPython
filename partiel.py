@@ -92,7 +92,6 @@ def rotate180From(tempOrigin, P):
     """
     transP[0] = -transP[0]
     transP[1] = -transP[1]
-
     #and then we return to the original position
     transP[0] = transP[0] + tempOrigin[0]
     transP[1] = transP[1] + tempOrigin[1]
@@ -101,16 +100,13 @@ def rotate180From(tempOrigin, P):
 
 def rotate90From(tempOrigin, P):
 
-    transP = [P[0] - tempOrigin[0], P[1] - tempOrigin[1]]
     """
     the rotation matrix is as follows:
     
     0     -1
     1     0
     """
-    transP[0] = -transP[0]
-    transP[1] = -transP[1]
-
+    transP = [-(P[1] - tempOrigin[1]), (P[0] - tempOrigin[0])]
     #and then we return to the original position
     transP[0] = transP[0] + tempOrigin[0]
     transP[1] = transP[1] + tempOrigin[1]
