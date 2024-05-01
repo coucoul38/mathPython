@@ -4,22 +4,22 @@ import numpy as np
 plt.grid(True)
 plt.axis('equal')
 
-def Reverse(tuples):
-    new_tup = tuples[::-1]
-    return new_tup
 
-def rotate180From(tempOrigin, P):
-
-    transP = [P[0] - tempOrigin[0], P[1] - tempOrigin[1]]
+def rotate180From(P):
+    
+    transP = [P[0], P[1]]
+            
     """
     the rotation matrix is as follows:
     -1          0
     0           -1
     """
-    transP[0] = -transP[0]
-    transP[1] = -transP[1]
+    for i in range(len(transP)):
+        transP[i] = transP[i] * (-1)
+    
     #and then we return to the original position
-    finalP = [transP[0] + tempOrigin[0], transP[1] + tempOrigin[1], P[2]]
+    finalP = [transP[0], transP[1], -P[2]]
+
 
     return finalP
 
@@ -69,25 +69,31 @@ def Hermite(bornes):
 def HermiteList(points):
     x = []
     y = []
-    for i in range(len(points)-1):
-        if(points[i+1][0]<points[i][0]):
-            """
-            flippedEnd = rotate180From(points[i], points[i+1])
+    for i in range(len(points)):
+        
+        """
+         
+            
+            flippedEnd = rotate180From(points[i])
+            flippedStart = rotate180From(points[i-1])
 
-            xy = Hermite([points[i], flippedEnd])
+            xy = Hermite([flippedStart, flippedEnd])
 
-            for i in range(len(xy)):
-                xy[i] = rotate180From(points[i], xy[i])
-            """
+            for j in range(len(xy)):
+                xy[j] = rotate180From(xy[j])
+            
+        """
+       
+        if(points[i][0]<points[i-1][0]):
             # On retourne en arrière, faut faire une rotation
             # On inverse leurs dérivées
-            a = [points[i+1][0], points[i+1][1], points[i+1][2]]
-            b = [points[i][0], points[i][1], points[i][2]]
+            a = [points[i-1][0], points[i-1][1], -points[i-1][2]]
+            b = [points[i][0], points[i][1], -points[i][2]]
             xy = Hermite([a, b])
             
         else:
-            xy = Hermite([points[i], points[i+1]])
-            
+            xy = Hermite([points[i-1], points[i]])
+
         for xi in xy[0]:
             x.append(xi)
         for yi in xy[1]:
@@ -113,8 +119,15 @@ def Display(x,y):
     plt.plot(x, y)
     plt.show()
 
+# A : point entre les angles
 #A = HermiteList([[1.8,5.8,2], [4,7,-0.2], [4.6,8.4, -1], [6, 9.5,-0.2], [8,7,-0.8], [8.2, 4.6, 0], [9.6, 4.4, 1], [7,3.2, 0], [5, 1.2, 0]])
-B = HermiteList([[2,6,1],[6,6,1],[3.6,8.5,0],[8.6,7.5,- 1]])
 #Display(A[0], A[1])
-Display(B[0],B[1])
+
+# B : point sur les angles (9 points)
+#B = HermiteList([[2, 6, 1],[6, 6, 1],[3.6, 8.5, 0],[8.6, 7.5, -1],[7.8, 4.8, -1],[9.4, 5.4, 0],[6, 3, -2],[5.8, 1.4, -0.6],[2.2, 2.4, 1.1]])
+#Display(B[0],B[1])
+
+# C : point sur les angles (10 points)
+C = HermiteList([[2, 6, 1],[6, 6, 1],[3.6, 8.5, 0],[8.6, 7.5, -1],[7.8, 4.8, -1],[9.4, 5.4, 0],[9, 3.3, -2],[6, 3, -2],[5.8, 1.4, -0.6],[2.2, 2.4, 1.1]])
+Display(C[0],C[1])
 
