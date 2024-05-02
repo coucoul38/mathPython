@@ -69,11 +69,11 @@ def phiFour(x):
     return (x**2 * (x - 1))
 
 def Display(x,y,Lx,Ly):
-    plt.cla()
-    plt.grid(True)
-    plt.axis('equal')
-    plt.plot(x, y)
-    plt.scatter(Lx, Ly, marker="o") # Display points
+    ax.cla()
+    ax.grid(True)
+    ax.axis('equal')
+    ax.plot(x, y)
+    ax.scatter(Lx, Ly, marker="o") # Display points
     plt.show()
 
 # A : point entre les angles
@@ -95,7 +95,26 @@ for i in range(len(list)):
     Lx.append(list[i][0]) 
     Ly.append(list[i][1])  
 
+
 # User Interface
+
+# On textbox enter
+def submitX(expression):
+    # Update point coordinates
+    print(expression)
+
+def submitY(expression):
+    # Update point coordinates
+    print(expression)
+
+# Textboxes to change point coordinates
+axbox = fig.add_axes([0.1, 0.05, 0.3, 0.075])
+text_boxX = TextBox(axbox, "X", textalignment="center")
+text_boxX.on_submit(submitX)
+aybox = fig.add_axes([0.5, 0.05, 0.3, 0.075])
+text_boxY = TextBox(aybox, "Y", textalignment="center")
+text_boxY.on_submit(submitY)
+
 # Point selection with left click
 def on_click(event):
     if event.button is MouseButton.LEFT:
@@ -111,24 +130,12 @@ def on_click(event):
                     Display(C[0],C[1], Lx, Ly)
 
                     # Text overlay on top of selected point
-                    plt.text(point[0] - 0.2 ,point[1] + 0.5,point[2])
+                    ax.text(point[0] - 0.2 ,point[1] + 0.5,point[2])
 
                     #box.TextArea.
-                    
-                    # Textboxes to change point coordinates
-                    #axbox = fig.add_axes([0.1, 0.05, 0.8, 0.075])
-                    #text_boxX = TextBox(axbox, "X", textalignment="center")
-                    #text_boxX.on_submit(submitX)
-
-                    #aybox = fig.add_axes([0.1, 0.05, 0.8, 0.075])
-                    #text_boxY = TextBox(aybox, "Y", textalignment="center")
-                    #text_boxY.on_submit(submitY)
                     plt.show()
 
-# On textbox enter
-def submitX(expression):
-    # Update point coordinates
-    print("BBAAAAAAAAAAAAAAA")
+
 
 plt.connect('button_press_event', on_click)
 
