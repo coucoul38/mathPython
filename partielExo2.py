@@ -1,12 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import matplotlib.offsetbox as box
-#from matplotlib import offsetbox
 from matplotlib.backend_bases import MouseButton
-from matplotlib.widgets import Slider, TextBox
-
+from matplotlib.widgets import Button, TextBox
 
 cursorRange = 0.25
+#create the global variable for selecting a point
+pointSelect = 0
 
 fig, ax = plt.subplots()
 fig.subplots_adjust(bottom=0.2)
@@ -25,10 +24,10 @@ def Hermite(bornes):
         phiX = (i - bornes[0][0])/(bornes[1][0] - bornes[0][0])
 
         y.append(
-        bornes[0][1] * phiOne(phiX)
-        + bornes[1][1] * phiTwo(phiX)
-        + (bornes[1][0]  - bornes[0][0]) * bornes[0][2] * phiThree(phiX)
-        + (bornes[1][0]  - bornes[0][0]) * bornes[1][2] * phiFour(phiX)
+        bornes[0][1] * PhiOne(phiX)
+        + bornes[1][1] * PhiTwo(phiX)
+        + (bornes[1][0]  - bornes[0][0]) * bornes[0][2] * PhiThree(phiX)
+        + (bornes[1][0]  - bornes[0][0]) * bornes[1][2] * PhiFour(phiX)
         )
          
     return [x,y]
@@ -56,25 +55,79 @@ def HermiteList(points):
     return (x,y)
 
 # phi functions for the Hermite calculations
-def phiOne(x):
+def PhiOne(x):
     return (((x - 1)**2) * (2 * x + 1))
 
-def phiTwo(x):
+def PhiTwo(x):
     return (x**2 * (-2 * x + 3))
 
-def phiThree(x): 
+def PhiThree(x): 
     return ((x - 1)**2 * x)
 
-def phiFour(x):
+def PhiFour(x):
     return (x**2 * (x - 1))
 
-def Display(x,y,Lx,Ly):
+def Display(x,y, list):
+    
+    #making lists to show points 
+    Lx , Ly = [] , []
+    for i in range(len(list)):
+        Lx.append(list[i][0]) 
+        Ly.append(list[i][1])  
+        
     ax.cla()
     ax.grid(True)
     ax.axis('equal')
     ax.plot(x, y)
     ax.scatter(Lx, Ly, marker="o") # Display points
     plt.show()
+
+# User Interface
+# Textboxes to change point coordinates
+axbox = fig.add_axes([0.15, 0.05, 0.1, 0.075])
+text_boxX = TextBox(axbox, "X", textalignment="center")
+aybox = fig.add_axes([0.35, 0.05, 0.1, 0.075])
+text_boxY = TextBox(aybox, "Y", textalignment="center")
+adbox = fig.add_axes([0.55, 0.05, 0.1, 0.075])
+text_boxD = TextBox(adbox, "F'(X)", textalignment="center")
+
+# Point selection with left click
+def On_click(event):
+    if event.button is MouseButton.LEFT:
+        mousex = event.xdata
+        mousey = event.ydata
+        # Check if point nearby
+        for i in range(len(pointList)):
+            #check if mouse is in thefigure box
+            if(mousex is not None and mousey is not None):
+                #horizontal check
+                if(mousex > pointList[i][0] and mousex < pointList[i][0] + cursorRange or pointList[i][0] > mousex and pointList[i][0] < mousex + cursorRange):
+                    #vertical check
+                    if(mousey > pointList[i][1] and mousey < pointList[i][1] + cursorRange or pointList[i][1] > mousey and pointList[i][1] < mousey + cursorRange):
+                        
+                        Display(C[0],C[1], pointList)
+
+                        global pointSelect
+                        pointSelect = i
+
+                        # Fill textboxes with point info
+                        text_boxX.set_val(pointList[pointSelect][0])
+                        text_boxY.set_val(pointList[pointSelect][1])
+                        text_boxD.set_val(pointList[pointSelect][2])
+
+                        #box.TextArea.
+                        plt.show()
+
+def Submit(event):
+    # Get data from textboxes
+    if(text_boxX.text != ""):
+        pointList[pointSelect][0] = float(text_boxX.text)
+    if(text_boxY.text != ""):
+        pointList[pointSelect][1] = float(text_boxY.text)
+    if(text_boxD.text != ""):
+        pointList[pointSelect][2] = float(text_boxD.text)
+    C = HermiteList(pointList)
+    Display(C[0],C[1],pointList)
 
 # A : point entre les angles
 #A = HermiteList([[1.8,5.8,2], [4,7,-0.2], [4.6,8.4, -1], [6, 9.5,-0.2], [8,7,-0.8], [8.2, 4.6, 0], [9.6, 4.4, 1], [7,3.2, 0], [5, 1.2, 0]])
@@ -85,58 +138,14 @@ def Display(x,y,Lx,Ly):
 #Display(B[0],B[1])
 
 # C : point sur les angles (10 points)
-list = [[2, 6, 1],[6, 6, 1],[3.6, 8.5, 0],[8.6, 7.5, -1],[7.8, 4.8, -1],[9.4, 5.4, 0],[9, 3.3, -2],[6, 3, -2],[5.8, 1.4, -0.6],[2.2, 2.4, 1.1]]
-C = HermiteList(list)
+pointList = [[2, 6, 1],[6, 6, 1],[3.6, 8.5, 0],[8.6, 7.5, -1],[7.8, 4.8, -1],[9.4, 5.4, 0],[9, 3.3, -2],[6, 3, -2],[5.8, 1.4, -0.6],[2.2, 2.4, 1.1]]
+C = HermiteList(pointList)
 
-#making lists to show points 
-Lx , Ly = [] , []
+plt.connect('button_press_event', On_click)
 
-for i in range(len(list)):
-    Lx.append(list[i][0]) 
-    Ly.append(list[i][1])  
+# Submit button
+bbox = fig.add_axes([0.8, 0.05, 0.1, 0.075])
+bsubmit = Button(bbox,"Submit")
+bsubmit.on_clicked(Submit)
 
-
-# User Interface
-
-# On textbox enter
-def submitX(expression):
-    # Update point coordinates
-    print(expression)
-
-def submitY(expression):
-    # Update point coordinates
-    print(expression)
-
-# Textboxes to change point coordinates
-axbox = fig.add_axes([0.1, 0.05, 0.3, 0.075])
-text_boxX = TextBox(axbox, "X", textalignment="center")
-text_boxX.on_submit(submitX)
-aybox = fig.add_axes([0.5, 0.05, 0.3, 0.075])
-text_boxY = TextBox(aybox, "Y", textalignment="center")
-text_boxY.on_submit(submitY)
-
-# Point selection with left click
-def on_click(event):
-    if event.button is MouseButton.LEFT:
-        mousex = event.xdata
-        mousey = event.ydata
-        # Check if point nearby
-        for point in list:
-            #horizontal check
-            if(mousex > point[0] and mousex < point[0] + cursorRange or point[0] > mousex and point[0] < mousex + cursorRange):
-                #vertical check
-                if(mousey > point[1] and mousey < point[1] + cursorRange or point[1] > mousey and point[1] < mousey + cursorRange):
-                    print(point[2])
-                    Display(C[0],C[1], Lx, Ly)
-
-                    # Text overlay on top of selected point
-                    ax.text(point[0] - 0.2 ,point[1] + 0.5,point[2])
-
-                    #box.TextArea.
-                    plt.show()
-
-
-
-plt.connect('button_press_event', on_click)
-
-Display(C[0],C[1], Lx, Ly)
+Display(C[0],C[1],pointList)
