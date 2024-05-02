@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -9,8 +8,6 @@ Cd = 0.47  # Coefficient de traînée
 A = 10  # Section transversale du sous-marin (m²)
 mass = 5000  # Masse du sous-marin (kg)
 volume = 5  # Volume du sous-marin (m³)
-engine_force = 2000  # Force de poussée des moteurs (N)
-dive_force = 1500  # Force de plongée vers le bas (N)
 
 # Conditions initiales
 initial_position = np.array([0.0, 0.0])  # Position initiale [x, y]
@@ -18,9 +15,11 @@ initial_velocity = np.array([2.0, -1.0])  # Vitesse initiale [vx, vy] avec mouve
 initial_time = 0  # Temps initial
 time_final = 10  # Temps final
 time_step = 0.01  # Pas de temps
+engine_force_init = 2000  # Force de poussée des moteurs (N)
+dive_force_init = 1500  # Force de plongée vers le bas (N)
 
 # Fonction pour calculer les forces
-def calculate_forces(position, velocity):
+def calculate_forces(velocity, engine_force, dive_force):
     # Poids
     weight = np.array([0, -mass * g])
 
@@ -42,11 +41,13 @@ def calculate_forces(position, velocity):
     return net_force
 
 # Fonction pour calculer le mouvement
-def simulate_motion(initial_position, initial_velocity, initial_time, time_final, time_step):
+def simulate_motion(initial_position, initial_velocity, initial_time, time_final, time_step, list_force):
     # Conditions initiales
     position = initial_position.copy()
     velocity = initial_velocity.copy()
     time = initial_time
+    engine = engine_force_init
+    dive = dive_force_init
     
     # Liste pour stocker la trajectoire
     trajectory = []
@@ -56,7 +57,11 @@ def simulate_motion(initial_position, initial_velocity, initial_time, time_final
         trajectory.append(position.copy())
         
         # Calcul des forces
-        net_force = calculate_forces(position, velocity)
+        for tChange in list_force:
+            if position[0] >= tChange[0]:
+                engine = tChange[1]
+                dive = tChange[2]
+        net_force = calculate_forces(velocity, engine, dive)
         
         # Calcul de l'accélération
         acceleration = net_force / mass
@@ -73,9 +78,7 @@ def simulate_motion(initial_position, initial_velocity, initial_time, time_final
     return np.array(trajectory)
 
 # Simuler le mouvement
-trajectory = simulate_motion(initial_position, initial_velocity, initial_time, time_final, time_step)
-
-
+trajectory = simulate_motion(initial_position, initial_velocity, initial_time, time_final, time_step, [[5, 2000, 0]])
 
 # Tracer la trajectoire
 plt.plot(trajectory[:, 0], trajectory[:, 1], label="Trajectoire du sous-marin")
