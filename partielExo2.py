@@ -110,10 +110,10 @@ def submitY(expression):
 # Textboxes to change point coordinates
 axbox = fig.add_axes([0.1, 0.05, 0.3, 0.075])
 text_boxX = TextBox(axbox, "X", textalignment="center")
-text_boxX.on_submit(submitX)
+#text_boxX.on_submit(submitX)
 aybox = fig.add_axes([0.5, 0.05, 0.3, 0.075])
 text_boxY = TextBox(aybox, "Y", textalignment="center")
-text_boxY.on_submit(submitY)
+#text_boxY.on_submit(submitY)
 
 # Point selection with left click
 def on_click(event):
@@ -134,8 +134,6 @@ def on_click(event):
 
                     #box.TextArea.
                     plt.show()
-
-
 
 plt.connect('button_press_event', on_click)
 
