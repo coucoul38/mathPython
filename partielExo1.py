@@ -1,10 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.grid(True)
-plt.axis('equal')
-
-
 def rotate180From(P):
     
     transP = [P[0], P[1]]
@@ -27,7 +23,6 @@ def rotate90From(tempOrigin, P):
 
     """
     the rotation matrix is as follows:
-    
     0     -1
     1     0
     """
@@ -72,16 +67,13 @@ def HermiteList(points):
     for i in range(len(points)):
         
         """
-         
-            
             flippedEnd = rotate180From(points[i])
             flippedStart = rotate180From(points[i-1])
 
             xy = Hermite([flippedStart, flippedEnd])
 
             for j in range(len(xy)):
-                xy[j] = rotate180From(xy[j])
-            
+                xy[j] = rotate180From(xy[j])  
         """
        
         if(points[i][0]<points[i-1][0]):
@@ -115,8 +107,11 @@ def phiThree(x):
 def phiFour(x):
     return (x**2 * (x - 1))
 
-def Display(x,y):
+def Display(x,y,Lx,Ly):
+    plt.grid(True)
+    plt.axis('equal')
     plt.plot(x, y)
+    plt.scatter(Lx, Ly, marker="o") # Display points
     plt.show()
 
 # A : point entre les angles
@@ -128,6 +123,14 @@ def Display(x,y):
 #Display(B[0],B[1])
 
 # C : point sur les angles (10 points)
-C = HermiteList([[2, 6, 1],[6, 6, 1],[3.6, 8.5, 0],[8.6, 7.5, -1],[7.8, 4.8, -1],[9.4, 5.4, 0],[9, 3.3, -2],[6, 3, -2],[5.8, 1.4, -0.6],[2.2, 2.4, 1.1]])
-Display(C[0],C[1])
+list = [[2, 6, 1],[6, 6, 1],[3.6, 8.5, 0],[8.6, 7.5, -1],[7.8, 4.8, -1],[9.4, 5.4, 0],[9, 3.3, -2],[6, 3, -2],[5.8, 1.4, -0.6],[2.2, 2.4, 1.1]]
+C = HermiteList(list)
 
+#making lists to show points 
+Lx , Ly = [] , []
+
+for i in range(len(list)):
+    Lx.append(list[i][0]) 
+    Ly.append(list[i][1])  
+    
+Display(C[0],C[1], Lx, Ly)
